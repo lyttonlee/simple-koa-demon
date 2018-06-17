@@ -21,7 +21,7 @@ module.exports = {
   },
   getUser: async (ctx, next) => {
     console.log(ctx['params']['userid'])
-    const user = await User.findById(ctx['params']['userid'])
+    const user = await User.findById(ctx['params']['userid']).populate('articles', 'title').exec()
     console.log(user)
     ctx.type = 'application/json'
     ctx.body = {
@@ -29,8 +29,16 @@ module.exports = {
     }
   },
   newArticle: async(ctx, next) => {
-    const article = new Article(ctx.request.body)
-    const res = await article.save()
-    ctx.body = res
+    const user = await User.findById(ctx['params']['userid'])
+    const newArticle = new Article(ctx.request.body)
+    
+    user.articles.push(newArticle)
+    console.log(user)
+    await user.save()
+    newArticle.author = user
+    console.log(newArticle)
+    await newArticle.save()
+    
+    ctx.body = newArticle
   }
 }

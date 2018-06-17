@@ -18,7 +18,7 @@ module.exports = {
     validateId: (schema, name) => {
       return async (ctx, next) => {
         const result = Joi.validate({param: ctx['params'][name]}, schema)
-        // console.log(result)
+        console.log(result)
         if (result.error) {
           ctx.body = result.error
         } else {
